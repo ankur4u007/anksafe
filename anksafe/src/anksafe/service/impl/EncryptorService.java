@@ -218,7 +218,8 @@ public class EncryptorService implements IEncryptorService {
 	}
 
 	private int getMagicNumber(final String sha1) {
-		return (sha1.hashCode() % DEFAULT_DIFF) == 0 ? DEFAULT_DIFF : sha1.hashCode() % DEFAULT_DIFF;
+		return ((sha1.hashCode() > 0 ? sha1.hashCode() : -sha1.hashCode()) % DEFAULT_DIFF) <= 0 ? DEFAULT_DIFF : (sha1
+				.hashCode() > 0 ? sha1.hashCode() : -sha1.hashCode()) % DEFAULT_DIFF;
 	}
 
 	private byte[] trimByteArrays(final byte[] initialByteArr, final int length) {
