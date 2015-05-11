@@ -29,13 +29,13 @@ public class ANKsafe {
 	 * @throws IOException
 	 */
 	public static void main(final String[] args) throws InterruptedException, IOException {
-
 		final List<String> excludedList = ExcludedFiles.getAllExcludedFiles();
 		List<File> dirList = null;
 		Boolean isEncrypt = null;
-
 		List<File> fileList = null;
+		boolean isParameterCall = false;
 		if (args.length > 0) {
+			isParameterCall = true;
 			fileList = new ArrayList<File>();
 			dirList = new ArrayList<File>();
 			for (final String s : args) {
@@ -51,6 +51,7 @@ public class ANKsafe {
 						dirList.add(f);
 					}
 				}
+
 			}
 		} else {
 			fileList = FileHandlerUtil.getAllFiles(FileHandlerUtil.WD, excludedList);
@@ -60,10 +61,9 @@ public class ANKsafe {
 
 		if (ConsolidatedFileList != null) {
 			String response = null;
-			Scanner sc = null;
+			final Scanner sc = new Scanner(System.in);
 			if (isEncrypt == null) {
 				System.out.print("Press 1 for Encrypt, 2 For Decrypt: ");
-				sc = new Scanner(System.in);
 				response = sc.nextLine();
 			} else if (isEncrypt) {
 				response = "1";
@@ -78,17 +78,25 @@ public class ANKsafe {
 				System.out.print("Re-Enter the Password to Encrypt:");
 				final String password2 = sc.nextLine();
 				if (password1.equals(password2)) {
-					System.out.print("Enter the Password Hint:");
-					response = sc.nextLine();
-					FileHandlerUtil.createHintFile(response);
+					// System.out.print("Enter the Password Hint:");
+					// response = sc.nextLine();
+					// FileHandlerUtil.createHintFile(response);
 					// Encrypt eachFile
+					String path = null;
 					for (final File file : ConsolidatedFileList) {
-						if (ecs.encyptFile(file, password1)) {
+						if (isParameterCall) {
+							if (file.isDirectory()) {
+								path = file.getCanonicalPath();
+							} else {
+								path = file.getParent();
+							}
+						}
+						if (ecs.encyptFile(file, password1, path)) {
 							file.delete();
 						}
 					}
 					// if possible delete any possible subdirs;
-					FileHandlerUtil.deleteSubdirs();
+					FileHandlerUtil.deleteSubdirs(path);
 				} else {
 					System.out.println("Passwords doesn't match, Try Again!");
 				}
@@ -97,16 +105,17 @@ public class ANKsafe {
 				System.out.print("Enter the Password to Decrypt:");
 				final String password = sc.nextLine();
 				// decrypt each file
-				int totalFilesDeleted = 0;
+				// int totalFilesDeleted = 0;
 				for (final File file : ConsolidatedFileList) {
 					if (ecs.decyptFile(file, password)) {
 						file.delete();
-						totalFilesDeleted++;
+						// totalFilesDeleted++;
 					}
 				}
-				if (totalFilesDeleted == ConsolidatedFileList.size()) {
-					FileHandlerUtil.deleteHintFile();
-				}
+				/**
+				 * if (totalFilesDeleted == ConsolidatedFileList.size()) {
+				 * FileHandlerUtil.deleteHintFile(); }
+				 **/
 			} else {
 				System.out.println("Not a Good Response, Try Again!");
 			}

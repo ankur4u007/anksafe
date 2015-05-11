@@ -22,20 +22,20 @@ public class EncryptorService implements IEncryptorService {
 	private static final int SANDDARD_BLOCK = 1024;
 
 	@Override
-	public boolean encyptFile(final File fileToEncrypt, final String password) throws IOException {
+	public boolean encyptFile(final File fileToEncrypt, final String password, final String path) throws IOException {
 		// TODO Auto-generated method stub
 		final String passwordSha1 = DigestUtils.sha1Hex(password);
 		final int magicNumber = getMagicNumber(passwordSha1);
-		final String fileNameSha1 = DigestUtils.sha1Hex(fileToEncrypt.getPath());
+		final String fileNameSha1 = DigestUtils.sha1Hex(fileToEncrypt.getCanonicalPath());
 		final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileToEncrypt));
-		final File encryptedFile = FileHandlerUtil.createFileInWD(fileNameSha1);
+		final File encryptedFile = FileHandlerUtil.createFileInWD(path + "\\" + fileNameSha1);
 		final BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(encryptedFile));
 		// writing the sha1 of password in bytes first
 		bos.write(passwordSha1.getBytes());
 		// writing the marker
 		bos.write(MARKER.getBytes());
 		// writing the encrypted fileNmae
-		bos.write(getByteArrayFromCharArr(getEncryptedCharsFromString(fileToEncrypt.getPath(), magicNumber)));
+		bos.write(getByteArrayFromCharArr(getEncryptedCharsFromString(fileToEncrypt.getCanonicalPath(), magicNumber)));
 		// writing the marker again
 		bos.write(MARKER.getBytes());
 

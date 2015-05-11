@@ -13,14 +13,17 @@ public class FileHandlerUtil {
 
 	public static List<File> consolidateList(final List<File> dirList, final List<File> fileList,
 			final List<String> excludedList) {
-		final List<File> consolidateList = new ArrayList<File>();
-		if (dirList != null) {
-			for (final File dir : dirList) {
-				consolidateList.addAll(getAllFiles(dir.getPath(), excludedList));
+		List<File> consolidateList = null;
+		if ((dirList != null) || (fileList != null)) {
+			consolidateList = new ArrayList<File>();
+			if (dirList != null) {
+				for (final File dir : dirList) {
+					consolidateList.addAll(getAllFiles(dir.getPath(), excludedList));
+				}
 			}
-		}
-		if (fileList != null) {
-			consolidateList.addAll(fileList);
+			if (fileList != null) {
+				consolidateList.addAll(fileList);
+			}
 		}
 		return consolidateList;
 	}
@@ -74,11 +77,11 @@ public class FileHandlerUtil {
 	}
 
 	public static File createFileInWD(final String fileName) {
-		return new File(WD + fileName);
+		return new File(fileName);
 	}
 
-	public static void deleteSubdirs() {
-		final File file = new File(WD);
+	public static void deleteSubdirs(final String path) {
+		final File file = new File(path);
 		deleteSubdirsRecursively(file);
 	}
 
