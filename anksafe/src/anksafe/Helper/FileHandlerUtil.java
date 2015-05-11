@@ -81,8 +81,10 @@ public class FileHandlerUtil {
 	}
 
 	public static void deleteSubdirs(final String path) {
-		final File file = new File(path);
-		deleteSubdirsRecursively(file);
+		if (path != null) {
+			final File file = new File(path);
+			deleteSubdirsRecursively(file);
+		}
 	}
 
 	public static void deleteSubdirsRecursively(final File file) {

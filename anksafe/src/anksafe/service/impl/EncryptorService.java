@@ -28,7 +28,8 @@ public class EncryptorService implements IEncryptorService {
 		final int magicNumber = getMagicNumber(passwordSha1);
 		final String fileNameSha1 = DigestUtils.sha1Hex(fileToEncrypt.getCanonicalPath());
 		final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileToEncrypt));
-		final File encryptedFile = FileHandlerUtil.createFileInWD(path + "\\" + fileNameSha1);
+		final File encryptedFile = FileHandlerUtil.createFileInWD(path != null ? path + "\\" + fileNameSha1
+				: fileNameSha1);
 		final BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(encryptedFile));
 		// writing the sha1 of password in bytes first
 		bos.write(passwordSha1.getBytes());
